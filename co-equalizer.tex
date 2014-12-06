@@ -1,0 +1,437 @@
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+
+\documentclass[a4paper]{amsart}            %for bookmarks enable option [liststotoc]%
+
+
+
+%-------packages-------------------------%
+
+
+\usepackage{amsmath}
+\usepackage{amsthm}        % Does theorem stuff
+\usepackage{amssymb} 
+\usepackage{xypic}  				%for strange reason I need this to make the two cell diagrams				
+\usepackage[2cell]{xy} 			%for commutative diagrams%
+
+\usepackage{color,hyperref}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.3}                      %pdf book marks the way I like%
+\hypersetup{pdftex=true, colorlinks=true, breaklinks=true, linkcolor=darkblue, menucolor=darkblue, pagecolor=darkblue, urlcolor=darkblue}
+
+
+
+%-----------style------------------------%
+
+\addtolength{\parskip}{\baselineskip} %Absätze im Text werden auch tatsächlich zu Absätzen%
+\parindent 0pt
+
+%----------new--commands-----------------%
+
+\newcommand{\C}{\mathcal{C}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\Mor}{\mathrm{Mor}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\Hom}{\operatorname{Hom}}
+
+%this command was proposed by Stefan_K%
+\newcommand*{\leftterm}{\left\{\substack{\normalsize \text{natural transformations}
+  \\h^A \rightarrow F} \right\}}
+\newlength{\leftside}
+\settowidth{\leftside}{$\leftterm$}
+
+% the following code will uplift the \maketitle title. In standard it is way too low.
+\makeatletter % wegen @ in den Befehsnamen
+\renewcommand*\@maketitle{%
+  \normalfont\normalsize
+  \@adminfootnotes
+  \@mkboth{\@nx\shortauthors}{\@nx\shorttitle}%
+% (SCHW) auskommentiert:  \global\topskip42\p@\relax % 5.5pc   "   "   "     "     "
+  \@settitle
+  \ifx\@empty\authors \else \@setauthors \fi
+  \ifx\@empty\@dedicatory
+  \else
+    \baselineskip18\p@
+    \vtop{\centering{\footnotesize\itshape\@dedicatory\@@par}%
+      \global\dimen@i\prevdepth}\prevdepth\dimen@i
+  \fi
+  \@setabstract
+  \normalsize
+  \if@titlepage
+    \newpage
+  \else
+    \dimen@34\p@ \advance\dimen@-\baselineskip
+    \vskip\dimen@\relax
+  \fi
+} % end \@maketitle
+\makeatother
+
+%--------new--enviroments----------------%
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}         %%                             %I somehow need this for the warning symbol to work 
+ \makeatletter                                                      %%                             properly, I don't really know why though%
+    \@addtoreset{equation}{section} % Make the equation counter reset each section
+    \@addtoreset{footnote}{section} % Make the footnote counter reset each section
+                                                                    %%
+ \newenvironment{warning}[1][]{%                                    %%
+    \begin{trivlist} \item[] \noindent%                             %%
+    \begingroup\hangindent=2pc\hangafter=-2                         
+    \clubpenalty=10000%                                             										
+    \hbox to0pt{\hskip-\hangindent\manfntsymbol{127}\hfill}\ignorespaces%
+    \refstepcounter{equation}\textbf{Warning~\theequation}%         
+    \@ifnotempty{#1}{\the\thm@notefont \ (#1)}\textbf{.}            
+    \let\p@@r=\par \def\p@r{\p@@r \hangindent=0pc} \let\par=\p@r}%  
+    {\hspace*{\fill}$\lrcorner$\endgraf\endgroup\end{trivlist}}  
+    
+    
+%\newenvironment{beweis}{\par\begingroup%
+%\settowidth{\leftskip}{\emph{Proof.~}}%																											remove to use \begin{beweis}
+%\noindent\llap{\emph{Proof.~}}}{\hfill$\Box$\par\endgroup}     
+    
+  
+
+\newenvironment{tmo}[1]{%
+  \trivlist
+  \leftskip=0.15cm
+  \item[\hskip\labelsep
+        \bfseries
+   #1\@{.}]\mbox{ }\par\nobreak
+   \vskip -0.5em\nobreak% Absatzabstand nachträglich entfernen.
+   \noindent
+  \leftskip=0.35cm
+  \rightskip=0.35cm
+  \itshape\ignorespaces
+}{%
+\endtrivlist}
+
+\newcounter{tm}
+% Falls tm abhängig von \section nummeriert werden soll:
+%\numberwithin{tm}{section}% anderenfalls auskommentieren!!!
+\newenvironment{tm}[1]{% wie tmo aber mit Nummer
+  \refstepcounter{tm}%
+  \tmo{#1~\thetm}%
+}{%
+  \endtmo
+}
+     
+\makeatletter
+
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \leftskip=0.6cm
+  
+  \item[\hskip\labelsep
+        \itshape
+    #1\@addpunct{.}]\mbox{ }\par\noindent%
+  \leftskip=1cm
+  \rightskip=1cm    
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother 
+
+\makeatother
+\theoremstyle{plain}                                               %%
+ \newtheorem{theorem}[equation]{Theorem}                            %%
+ \newtheorem*{claim}{Claim}                                         %%
+ \newtheorem*{lemma*}{Lemma}
+ \newtheorem*{proposition*}{Proposition}                                       %%
+ \newtheorem*{theorem*}{Theorem}                                    %%
+ \newtheorem{lemma}[equation]{Lemma}                                %%
+ \newtheorem{corollary}[equation]{Corollary}                        %%
+ \newtheorem{proposition}[equation]{Proposition}                    %%
+
+%--produce-the-warning--symbol-----------%
+ \DeclareFontFamily{U}{manual}{}                                
+ \DeclareFontShape{U}{manual}{m}{n}{ <->  manfnt }{}            
+ \newcommand{\manfntsymbol}[1]{%                                
+    {\fontencoding{U}\fontfamily{manual}\selectfont\symbol{#1}}}
+
+\makeatother
+
+
+\begin{document}
+
+%------------header----------------------%
+
+\title{Equalizer and Coequalizer}
+%\author{Felix Hoffmann}% %for now I decided against it%
+
+\begin{abstract}In this short article basic properties of equalizers and their dual concept of coequalizers are being explored. In particular, equalizers and coequalizers in \textbf{Set} are characterized. In the last part it is shown that subspace toplogy constructions correspond to equalizers in \textbf{Top}, whereas, dually, quotient topology constructions correspond to coequalizers.
+\end{abstract}
+
+\maketitle
+\pagestyle{empty} %no pagenumbers and titles%
+\thispagestyle{empty}
+
+
+
+%-------end header-----------------------%
+
+Equalizers (Coequalizers) are limits (colimits) over diagrams
+
+\begin{align*}
+\xymatrix@=+1.25cm{ {\bullet} \ar@<-1ex>[r] \ar@<1ex>[r] & {\bullet}}
+\end{align*}
+
+with two objects and two parallel arrows.
+
+An equalizer of $\xymatrix{X \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} & Y}$ is therefore a pair $(A,\iota)$, consisting of an object $A$ and a morphism $A \xrightarrow{\iota} X$, such that
+
+\begin{enumerate}
+
+\item $f \circ \iota = g \circ \iota$
+\bigskip
+\item and for every other object $T$ with a morphism $T \xrightarrow{t} X$, such that $f \circ \iota = g \circ \iota$, there exists a unique morphism $T \rightarrow A$ such that 
+
+\begin{align*} \xymatrix@+=1.25cm{A \ar[r]^{\iota} & X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y \\
+																										 T \ar@{.>}[u] \ar[ur]_t} \end{align*}
+																										 
+																										 commutes.
+																										 																										 
+\end{enumerate}	
+
+\textbf{Note} that a morphism $A \rightarrow Y$ need not be specified since it is already uniquely determined by the demand of commutativity of the following cone:
+
+\begin{align*} \xymatrix@=0.6cm{&A \ar@/_/[ddl] \ar@{.>}@/^/[ddr] \\ & & \\X \ar@<0.66ex>[rr]^f \ar@<-0.66ex>[rr]_g	 & & Y}
+\end{align*}
+
+In the same way the requirement, that $f \circ \iota = g \circ \iota$, also follows directly from the limit property of $(A, \iota)$.
+
+A coequalizer of $\xymatrix{X \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} & Y}$ is then a pair $(B,\pi)$, consisting of an object $B$ and a morphism $Y \xrightarrow{\pi} B$, such that
+
+\begin{enumerate}
+
+\item $\pi \circ f = \pi \circ g$
+\bigskip
+\item and for every other object $T$ with a morphism $Y \xrightarrow{t} T$, such that $t \circ f = t \circ g$, there exists a unique morphism $B \rightarrow T$ such that 
+
+\begin{align*} \xymatrix@+=1.25cm{X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y \ar[dr]_t \ar[r]^{\pi} & B \ar@{.>}[d]\\
+																								&	&	 T } \end{align*}
+																										 
+																										 commutes.
+																										 																										 
+\end{enumerate}																							
+
+Per definition the notion of equalizer is \emph{dual} to the notion of coequalizer. From abstract nonsense we also know that any two equalizers resp. coequalizers are uniquely isomorphic.
+\bigskip
+
+\section*{\textbf{Equalizers and Coequalizers in Set}}
+
+Given $\xymatrix{X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y}$ in \textbf{Set} we can easily form the equalizer of this diagram as $(A,\iota)$, where
+\begin{equation*}
+A=\left\{x \in X \mid f(x)=g(x)\right\}
+\end{equation*}
+
+and $\iota:A \hookrightarrow X$ is the natural inclusion map from $A$ into $X$.
+
+Indeed, by definition $f \circ \iota = g \circ \iota$ holds, and given another set $T$, such that $f \circ t  = g \circ t$, we conclude that $t(x) \in A \subset X$ (since $f(t(x)) = g(t(x))$!) and have the unique map $\phi: T \rightarrow A, x \mapsto t(x)$ such that
+
+\begin{align*}
+\xymatrix@+=1.25cm{T \ar[d]_{\phi} \ar[rd]^t & & \\
+									 A \ar@{^{(}->}[r]^{\iota} & X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y} 
+\end{align*}
+
+commutes.
+
+\bigskip
+
+Dually, we can form the coequalizer of $\xymatrix{X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y}$ as $(B, \pi)$, where $B = Y/{\sim}$ and $\pi$ is the canonical projection map 
+
+\begin{equation*}
+\xymatrix@=0.7cm{Y \ar[r]^{\pi} & Y/{\sim}}
+\end{equation*}
+
+Here $\sim$ is the equivalence relation that is generated by $f(x) = g(x)$ for all $x \in X$.
+
+Of course $\pi \circ f = \pi \circ g$ holds, 
+
+\begin{equation*}
+\pi(f(x)) = [f(x)] = [g(x)] = \pi(g(x))
+\end{equation*}
+
+and given another object $T$, with map $Y \xrightarrow{t} T$, such that $t \circ f = t \circ g$, we define the map 
+
+\begin{equation*}
+\phi: Y/{\sim} \rightarrow T, [y] \mapsto t(y)
+\end{equation*}
+
+and conclude that $\phi$ is well-defined:
+
+Given $y \sim z$, then, by definition, there is a chain $y=a_0,a_1,...,a_k=z$, such that for $i$ in ${1,...,k}$
+	
+\begin{align*}
+&a_{i-1} = f(x) \mathrm{\ and} \ a_{i}=g(x), \mathrm{ \ or} \\
+&a_{i-1} = g(x) \mathrm{\ and} \ a_{i}=f(x) \mathrm{\ for} \ x \mathrm{\ in} \ X
+\end{align*}
+
+Thus $t(y)=t(a_0)=t(a_1)=...=t(a_k)=t(z)$ and t is well-defined. Of course, $\phi$ is the only map such that 
+
+\begin{align*} \xymatrix@+=1.25cm{X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y \ar[dr]_t \ar@{->>}[r]^{\pi} & Y/{\sim} \ar@{.>}[d]^{\phi}\\
+																								&	&	 T } \end{align*}   	
+																								
+commutes.																								
+
+\section*{\textbf{Equalizer morphisms are monomorphisms}}
+
+Let $(A, \iota)$ be an equalizer of $\xymatrix{X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y}$, then $\iota: A \rightarrow X$ is a monomorphism.
+
+\begin{proof}
+Given two morphisms $h_1, h_2: Z \rightarrow A$, such that 
+
+\begin{equation*}
+\iota \circ h_1 = \iota \circ h_2
+\end{equation*}
+
+we need to show that $h_1 = h_2$.
+
+This, however, follows directly from the universal property of $(A, \iota)$, 
+
+\begin{align*}
+\xymatrix@+=1.25cm{Z \ar@<-0.66ex>[d]_{h_1} \ar@<0.66ex>[d]^{h_2} \ar[rd]^{\iota \circ h_1 = \iota \circ h_2} & & \\
+									 A \ar[r]^{\iota} & X \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & Y}
+\end{align*}
+
+since 
+\begin{equation*}
+f \circ (\iota \circ h_1) = f \circ \iota \circ h_1 = g \circ \iota \circ h_1 = g \circ (\iota \circ h_1)
+\end{equation*}
+
+holds, there is only \emph{one} morphism $Z \rightarrow A$ makes the above diagram commute, it follows that $h_1 = h_2$.
+\end{proof}
+
+Dually, of course, \emph{coequalizer morphisms are epimorphisms}.
+
+\bigskip
+
+In \textbf{Set} the converse holds:
+
+\begin{tm}{Proposition}
+If $A \xrightarrow{\iota} X$ is a monomorphism, $(A, \iota)$ is an equalizer.
+\end{tm}
+
+\begin{proof}
+To see this consider $X/{\sim}$, where $\sim$ is the induced equivalence relation on $X$ by $\iota(a_1)=\iota(a_2)$ for all $a_1,a_2 \in A$.
+
+Assuming that $A \neq \emptyset$, denote $\ast$ as the equivalence class of any $a \in \operatorname{im} A$.
+
+Then $(A, \iota)$ is an equalizer of $\xymatrix{X \ar@<0.66ex>[r]^-{\pi} \ar@<-0.66ex>[r]_-{\ast} &X/{\sim}}$, where $\pi$ is the canonical projection and $\ast$ is the \emph{constant} function that maps every element of X onto $\ast$ in $X/{\sim}$.
+
+Indeed, $\pi \circ \iota = \ast \circ \iota$ holds, and given another object $T$ with morphism $T \xrightarrow{t} X$, such that $\pi \circ t = \ast \circ t$, we contend that $t(x) \in \operatorname{im} A$ for all $x$ in $X$.
+
+For this assume $t(x) \notin \operatorname{im} A$, but then, by definition of $\sim$, $\pi(t(x)) = [t(x)] \neq \ast$, which contradicts the definition of $t$.
+
+Thus we can define the map $\phi:T \rightarrow A, x \mapsto \iota^{-1}(t(x))$ and immediately verify that it satisfies the commutativity requirement. Also, $\phi$ is unique by the assumption that $\iota$ is a monomorphism.
+
+If A is empty, $(A,\iota)$, where $\iota$ is in this case the empty function, is the equalizer of $\xymatrix{X \ar@<0.66ex>[r]^-{f} \ar@<-0.66ex>[r]_-{g} & X \times \{0,1\}}$, where $f(x)=(x,0)$ and $g(x)=(x,1)$.
+
+
+
+
+\end{proof}
+
+\bigskip 
+
+There is a similar construction for coequalizers:
+
+\medskip
+
+\begin{tm}{Proposition}
+If $Y \xrightarrow{\pi} B$ is an epimorphism in \textbf{Set}, $(B, \pi)$ is a coequalizer.
+\end{tm}
+
+\begin{proof}
+We contend that $(B,\pi)$ is a coequalizer of $\xymatrix{Y \ar@<0.66ex>[r]^-{\id_Y} \ar@<-0.66ex>[r]_-{f} &Y}$, where $\id_Y$ is the identity map and $f$ is defined by $f(y)=\tau([y])$, where $\tau$ is any map 
+
+\[
+\tau: Y/{\sim} \to Y,
+\]
+
+ such that $[\tau([y])]=[y]$. 
+\begin{align*}
+\xymatrix@+=1cm{Y  \ar[rr]^{f} \ar[rd]_{\operatorname{can}} & & Y\\
+								&	 Y/{\sim} \ar[ur]_{\tau}  &}
+\end{align*}
+
+Here, $\sim$ is the equivalence relation induced by $\pi$, 
+\[y_1 \sim y_2 \Leftrightarrow \pi(y_1)=\pi(y_2).\]
+
+The map $f$ therefore maps two elements $y_1,y_2$ in $Y$ to the same $f(y_1)=f(y_2)$, if and only if $\pi(y_1)=\pi(y_2)$ and we have the identity 
+\[\pi(f(y))=\pi(y).\]
+
+The assertion is now easily verfied. Firstly the equation above is exactly the demanded identity of $\pi \circ f = \pi \circ \id_Y$ and for the second property consider a set $T$ and map $t: Y \to T$ such that $t(f(y))=t(y)$. 
+
+Since $\pi$ is surjective and by the requirement to commute with $\pi$ and $t$, the map $B \to T$ is already uniquely determined by $\pi(y) \mapsto t(y)$, and it is well-defined: Given $y_1,y_2$ in $Y$ with $\pi(y_1)=\pi(y_2)$, it follows that $f(y_1)=f(y_2)$ and thus 
+\[t(y_1)=t(f(y_1))=t(f(y_2))=t(y_2).\]\end{proof}
+
+\section*{\textbf{Equalizer and coequalier in Top}}
+
+
+Equalizers in \textbf{Top} correspond to \emph{subspace topology} constructions, whereas coequalizers correspond to \emph{quotient topology} constructions.
+
+First consider equalizers. We will show that to every subspace topology construction we can find a diagram that the subspace topology is an equalizer of. Then, conversely, we verify that every equalizer in \textbf{Top} is already a subspace topology construction.
+
+We start with a topological space $(X, \O_X)$ and a subset $A$ of $X$. Then the pair $((A, \O_A), \iota)$, consisting of the topological space $(A, \O_A)$ and the map $\iota: A \rightarrow X$, where $\iota$ is the natural inclusion map of $A$ in $X$ and $\O_A=\{\iota^{-1}(U) \mid U \in \O:X \}$ is the subspace topology on A, is an \emph{equalizer} of $\xymatrix{(X,\O_X) \ar@<0.66ex>[r]^{\pi} \ar@<-0.66ex>[r]_{\ast} &(Y,\O_Y)}$.
+
+Here $Y=X/{\sim},\ \pi$ and $\ast$ are constructed as in Proposition 1 and $\O_Y = \{U \subseteq Y \mid \pi^{-1} \in \O_X\}$ is the quotient topology on Y.
+
+Indeed, from the construction in Proposition 1 we already know that $(A, \iota)$ is the set-theoretical equalizer of $\xymatrix{(X,\O_X) \ar@<0.66ex>[r]^{\pi} \ar@<-0.66ex>[r]_{\ast} &(Y,\O_Y)}$, so we just need to check the additional requirements in \textbf{Top}. The maps $\pi$ and $\ast$ are indeed continuous (and therefore proper morphisms in \textbf{Top}), since the canonical surjection $\pi$ is continuous by definition of $\O_Y$ and constant maps such as $\ast$ are always continuous.
+
+Given another topological space $(T, \O_T)$ with a continuous map $T \xrightarrow{t} X$, such that $\pi \circ t = \ast \circ t$, we know from Proposition 1, that there is a unique map $\phi:T \rightarrow A$ such that     
+
+\begin{align*} \xymatrix@+=1.25cm{(A,\O_A) \ar[r]^{\iota} & (X,\O_X) \ar@<0.66ex>[r]^{\pi} \ar@<-0.66ex>[r]_{\ast} & (Y,\O_Y) \\
+																										 (T,\O_T) \ar[u]_{\phi} \ar[ur]_t} \end{align*}
+																										 
+commutes. But since $\iota \circ \phi = t$ is continuous, from the characteristic property of $\O_A$ it follows that $\phi:(T,\O_T) \rightarrow (A,\O_A)$ is continuous and thus a morphism in \textbf{Top}. 
+
+\bigskip
+
+For the converse direction, let $((A,\O_A), \iota)$ be an equalizer of a diagram \[\xymatrix{(X,\O_X) \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} &(Y,\O_Y)}\] in \textbf{Top}. We contend that the subspace topology construction $(\iota(A), \O_{\iota(A)})$, with the subset $\iota(A)$ in $X$, is already homeomorphic to $(A,\O_A)$. 
+
+This is easily verified by using the universal property of $((A, \O_A), \iota)$: We show that $((\iota(A), \O_{\iota(A)}), j)$, where $j$ is the natural inclusion map, is itself an equalizer. Set theoretically, we see that $\iota': A \to \iota(A),\, a \mapsto \iota(a)$ is the unique bijection ($\iota'$ is injective) between $A$ and $\iota(A)$  that makes 
+
+\begin{align*} \xymatrix@+=1.25cm{(\iota(A),\O_{\iota(A)}) \ar[r]^{j} & (X,\O_X) \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} & (Y,\O_Y) \\
+																										 (A,\O_A) \ar[u]_{\iota'} \ar[ur]_\iota} \end{align*}
+
+commute. From \[f(j(\iota'(x))=f(\iota(x))=g(\iota(x))=g(j(\iota'(x)))\] we conclude that $f \circ j = g \circ j$ holds. 
+
+Then, given any other topological space $(T, \O_T)$ with continuous map $T \xrightarrow{t} X$, such that $f \circ t = g \circ t$ we get the unique continuous map $\phi: T \to A$ from the universal property of $(A, \O_A)$ and thus the unique map $\iota' \circ \phi: T \to \iota(A)$ such that 
+
+\begin{align*} \xymatrix@+=1.25cm{(\iota(A),\O_{\iota(A)}) \ar[r]^{j} & (X,\O_X) \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} & (Y,\O_Y) \\
+																										 (A,\O_A) \ar[u]_{\iota'} \ar[ur]_\iota \\(T,\mathcal{O}_T) \ar[u]^{\phi} \ar[uur]_t } \end{align*}
+																										 
+commutes. Since $j \circ (\iota' \circ \phi) = t$ is continuous, and $j$ is continuous by the definition of $\mathcal{O}_{\iota{A}}$, the map $\iota' \circ \phi$ is continuous by the characteristic property of the subspace topology. 
+
+Thus $(\iota(A),\O_{\iota(A)}, j)$ is itself an equalizer of \[\xymatrix{(X,\O_X) \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} &(Y,\O_Y)}\] and hence have a homeomorphism between $(A,\O_A)$ and $(\iota(A), \O_{\iota(A)})$. The equalizer $(A,\O_A)$ may therefore be viewed as a subspace topology construction.
+
+\bigskip
+
+In the \emph{dual} case of coequalizers we proceed analoguously. First consider a quotient topology construction $(B,\O_{\operatorname{Quot(\pi)}})$ to a surjective map $\pi: Y \to B$ and a topology $(Y,\O_Y)$ on $Y$. 
+
+From Proposition 2, we obtain a map $f$ such that $(B,\O_{\operatorname{Quot(\pi)}})$ is a coequalizer of the diagram \[\xymatrix{(Y,\O_Y) \ar@<0.66ex>[r]^-{\id_Y} \ar@<-0.66ex>[r]_-{f} &(Y,\O_Y)}\] in \textbf{Set}, and contend that this is also true in \textbf{Top}. Again, $\pi \circ f = \pi \circ \id_Y$ of course still holds and, as in the case of equalizers, the continuity of the unique map $B \rightarrow T$ follows from the characteristic property of the quotient topology. 
+
+Conversely, given a coequalizer $((B,\O_B),\pi)$ of $\xymatrix{(X,\O_X) \ar@<0.66ex>[r]^{f} \ar@<-0.66ex>[r]_{g} &(Y,\O_Y)}$ we show that $(B,\O_{\operatorname{Quot(\pi)}})$ is a coequalizer of the same diagram. 
+
+Here $\pi \circ f = \pi \circ g$ holds by definition for $(B,\O_{\operatorname{Quot(\pi)}})$ and the universal property is obtained from the diagram
+
+\begin{align*} \xymatrix@+=1.25cm{(X,\O_X) \ar@<0.66ex>[r]^f \ar@<-0.66ex>[r]_g & (Y,\O_Y) \ar[ddr]_t \ar[dr]_{\pi} \ar[r]^{\pi} & (B,\O_{\operatorname{Qout}(B)}) \ar[d]^{\id}\\
+																								&	&	 (B,\O_B) \ar[d]^{\phi} \\ & & (T,\O_T) } \end{align*}
+
+and the characteristic property of the quotient topology.
+
+\vspace{6.4cm}
+\begin{flushright}
+\textsl{\small    Felix Hoffmann\\ \href{http://www.3diagramsperpage.wordpress.com/}{3diagramsperpage.com}}
+\end{flushright}
+
+																									 
+\end{document}
